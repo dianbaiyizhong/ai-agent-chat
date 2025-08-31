@@ -87,7 +87,7 @@ const chatList = ref([
     name: 'TDesignAI',
     datetime: '今天16:38',
     reasoning: '',
-    content: '它叫 McMurdo Station ATM，是美国富国银行安装在南极洲最大科学中心麦克默多站的一台自动提款机。',
+    content: `你问我我问谁`,
     role: 'assistant',
     duration: 10,
   },
@@ -110,6 +110,8 @@ const onStop = function () {
 };
 
 const inputEnter = function (inputValue) {
+
+
   if (isStreamLoad.value) {
     return;
   }
@@ -179,6 +181,9 @@ const handleData = async () => {
         lastItem.reasoning += chunk;
       } else if (isTool(chunk)) {
         console.info(chunk)
+        chunk = chunk.substring(6);
+        lastItem.reasoning = lastItem.reasoning + "\n" + `\`\`\`json\n${chunk}\n\`\`\``
+
       } else if (isAnswer(chunk)) {
         chunk = chunk.substring(7);
         lastItem.content += chunk;
