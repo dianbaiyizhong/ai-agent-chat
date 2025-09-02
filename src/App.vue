@@ -1,74 +1,75 @@
 <template>
-  <div class="chat-box">
-    <t-chat
-        ref="chatRef"
-        :clear-history="chatList.length > 0 && !isStreamLoad"
-        :data="chatList"
-        :text-loading="loading"
-        :is-stream-load="isStreamLoad"
-        style="height: 600px"
-        @scroll="handleChatScroll"
-        @clear="clearConfirm"
-    >
+  <t-chat
+      ref="chatRef"
+      :clear-history="chatList.length > 0 && !isStreamLoad"
+      :data="chatList"
+      :text-loading="loading"
+      :is-stream-load="isStreamLoad"
+      style="height: 600px"
+      @scroll="handleChatScroll"
+      @clear="clearConfirm"
+  >
 
-      <template #content="{ item, index }">
-        <t-chat-reasoning v-if="item.reasoning?.length > 0" expand-icon-placement="right">
-          <template #header>
-            <t-chat-loading v-if="isStreamLoad && item.content.length === 0" text="思考中..."/>
-            <div v-else style="display: flex; align-items: center">
-              <CheckCircleIcon style="font-size: 20px; margin-right: 8px;color: var(--td-success-color-5)"/>
-              <span>{{ item.duration ? `已深度思考(用时${item.duration}秒)` : '已深度思考' }}</span>
-            </div>
-          </template>
-          <t-chat-content v-if="item.reasoning.length > 0" :content="item.reasoning"/>
-        </t-chat-reasoning>
-        <t-chat-content v-if="item.content.length > 0" :content="item.content"/>
-
-
-      </template>
+    <template #content="{ item, index }">
+      <t-chat-reasoning v-if="item.reasoning?.length > 0" expand-icon-placement="right">
+        <template #header>
+          <t-chat-loading v-if="isStreamLoad && item.content.length === 0" text="思考中..."/>
+          <div v-else style="display: flex; align-items: center">
+            <CheckCircleIcon style="font-size: 20px; margin-right: 8px;color: var(--td-success-color-5)"/>
+            <span>{{ item.duration ? `已深度思考(用时${item.duration}秒)` : '已深度思考' }}</span>
+          </div>
+        </template>
+        <t-chat-content v-if="item.reasoning.length > 0" :content="item.reasoning"/>
+      </t-chat-reasoning>
+      <t-chat-content v-if="item.content.length > 0" :content="item.content"/>
 
 
-      <template #actions="{ item, index }">
-        <t-chat-action
-            :content="item.content"
-            :operation-btn="['good', 'bad', 'replay', 'copy']"
-            @operation="handleOperation"
-        />
-      </template>
-      <template #footer>
-        <t-chat-sender
-            :textarea-props="{
+    </template>
+
+
+    <template #actions="{ item, index }">
+      <t-chat-action
+          :content="item.content"
+          :operation-btn="['good', 'bad', 'replay', 'copy']"
+          @operation="handleOperation"
+      />
+    </template>
+    <template #footer>
+      <t-chat-sender
+          v-model="inputValue"
+          :textarea-props="{
       placeholder: '请输入消息...', }"
-            :loading="loading"
-            :stop-disabled="isStreamLoad"
-            @send="inputEnter"
-            @stop="onStop"
-        >
-          <!-- 自定义操作区域的内容，默认支持图片上传、附件上传和发送按钮 -->
-          <template #suffix="{ renderPresets }">
-            <!-- 在这里可以进行自由的组合使用，或者新增预设 -->
-            <!-- 不需要附件操作的使用方式 -->
-            <component :is="renderPresets([])"/>
-            <!-- 只需要附件上传的使用方式-->
-            <!-- <component :is="renderPresets([{ name: 'uploadAttachment' }])" /> -->
-            <!-- 只需要图片上传的使用方式-->
-            <!-- <component :is="renderPresets([{ name: 'uploadImage' }])" /> -->
-            <!-- 任意配置顺序-->
-            <!-- <component :is="renderPresets([{ name: 'uploadAttachment' }, { name: 'uploadImage' }])" /> -->
-          </template>
-        </t-chat-sender>
-      </template>
-    </t-chat>
-    <t-button v-show="isShowToBottom" variant="text" class="bottomBtn" @click="backBottom">
-      <div class="to-bottom">
-        <ArrowDownIcon/>
-      </div>
-    </t-button>
-  </div>
+          :loading="isStreamLoad"
+          :stop-disabled="isStreamLoad"
+          @send="inputEnter"
+          @stop="onStop"
+      >
+        <!-- 自定义操作区域的内容，默认支持图片上传、附件上传和发送按钮 -->
+        <template #suffix="{ renderPresets }">
+          <!-- 在这里可以进行自由的组合使用，或者新增预设 -->
+          <!-- 不需要附件操作的使用方式 -->
+          <component :is="renderPresets([])"/>
+          <!-- 只需要附件上传的使用方式-->
+          <!-- <component :is="renderPresets([{ name: 'uploadAttachment' }])" /> -->
+          <!-- 只需要图片上传的使用方式-->
+          <!-- <component :is="renderPresets([{ name: 'uploadImage' }])" /> -->
+          <!-- 任意配置顺序-->
+          <!-- <component :is="renderPresets([{ name: 'uploadAttachment' }, { name: 'uploadImage' }])" /> -->
+        </template>
+      </t-chat-sender>
+    </template>
+  </t-chat>
+  <t-button v-show="isShowToBottom" variant="text" class="bottomBtn" @click="backBottom">
+    <div class="to-bottom">
+      <ArrowDownIcon/>
+    </div>
+  </t-button>
 </template>
 <script setup lang="jsx">
 import {ref} from 'vue';
 import {ArrowDownIcon, CheckCircleIcon} from 'tdesign-icons-vue-next';
+
+const inputValue = ref('');
 
 const fetchCancel = ref(null);
 const loading = ref(false);
@@ -106,10 +107,11 @@ const chatList = ref([
     avatar: 'https://tdesign.gtimg.com/site/chat-avatar.png',
     name: 'TDesignAI',
     datetime: '今天16:38',
-    reasoning: '',
+    reasoning: 'ssss',
     content: `你问我我问谁`,
     role: 'assistant',
     duration: 10,
+    variant: 'outline'
   },
   {
     avatar: 'https://tdesign.gtimg.com/site/avatar.jpg',
@@ -118,6 +120,8 @@ const chatList = ref([
     content: '南极的自动提款机叫什么名字？',
     role: 'user',
     reasoning: '',
+    variant: 'base'
+
   },
 ]);
 
@@ -220,95 +224,5 @@ const handleData = async () => {
 };
 </script>
 <style lang="less">
-/* 应用滚动条样式 */
-::-webkit-scrollbar-thumb {
-  background-color: var(--td-scrollbar-color);
-}
 
-::-webkit-scrollbar-thumb:horizontal:hover {
-  background-color: var(--td-scrollbar-hover-color);
-}
-
-::-webkit-scrollbar-track {
-  background-color: var(--td-scroll-track-color);
-}
-
-.chat-box {
-  position: relative;
-
-  .bottomBtn {
-    position: absolute;
-    left: 50%;
-    margin-left: -20px;
-    bottom: 210px;
-    padding: 0;
-    border: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.08), 0px 16px 24px 2px rgba(0, 0, 0, 0.04),
-    0px 6px 30px 5px rgba(0, 0, 0, 0.05);
-  }
-
-  .to-bottom {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #dcdcdc;
-    box-sizing: border-box;
-    background: var(--td-bg-color-container);
-    border-radius: 50%;
-    font-size: 24px;
-    line-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .t-icon {
-      font-size: 24px;
-    }
-  }
-}
-
-.model-select {
-  display: flex;
-  align-items: center;
-
-  .t-select {
-    width: 112px;
-    height: 32px;
-    margin-right: 8px;
-
-    .t-input {
-      border-radius: 32px;
-      padding: 0 15px;
-    }
-  }
-
-  .check-box {
-    width: 112px;
-    height: 32px;
-    border-radius: 32px;
-    border: 0;
-    background: #e7e7e7;
-    color: rgba(0, 0, 0, 0.9);
-    box-sizing: border-box;
-    flex: 0 0 auto;
-
-    .t-button__text {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      span {
-        margin-left: 4px;
-      }
-    }
-  }
-
-  .check-box.is-active {
-    border: 1px solid #d9e1ff;
-    background: #f2f3ff;
-    color: var(--td-brand-color);
-  }
-}
 </style>
